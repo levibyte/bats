@@ -38,13 +38,14 @@ function create_bat_testpoint
     fi
     
     echo "  run $cmd $input" >> $fname
+    echo "  [ \"\$status\" -eq 0 ]" >> $fname
     
-    if [ "$custom_check " != "" ]; then
+    if [ "$custom_check" != "" ]; then
         echo "  $custom_check" >> $fname
     else
-        echo "  [ \"\$status\" -eq 0 ]" >> $fname
         echo "  [ \"\$output\" = \"$expected_out\" ]" >> $fname
     fi
+    
     echo "}" >> $fname
     echo >> $fname
 }
@@ -135,16 +136,17 @@ function genereate_test_cases
 {
     declare -a test_vector
     test_vector[0]=$type_d
+    test_vector[1]=$type_d
     test_vector[3]=$type_a
     test_vector[4]=$type_b
-    #test_vector[5]=$type_d
-    test_vector[7]=$type_d
     test_vector[8]=$type_b
     test_vector[9]=$type_a
     test_vector[12]=$type_c
     test_vector[24]=$type_c
     test_vector[33]=$type_c
     test_vector[36]=$type_c
+    test_vector[40]=$type_c
+    test_vector[41]=$type_c
     test_vector[333]=$type_c
     test_vector[240]=$type_c
     
