@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ !-f "sourceme.sh" ]; then
+if [ ! -f "sourceme.sh" ]; then
     echo "Error: sourcme.sh not found"
     exit 1
 fi
