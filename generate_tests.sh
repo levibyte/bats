@@ -86,9 +86,10 @@ function create_bat_testcase_for_command_option_two
     touch $fname
     command="$BIN2TEST $current_command"
     for input in "${!test_vector[@]}"; do
+        expected_out=$input
         cust_msg="<$command $input $input.f> should write <$input> to <$input.f> file"
         cust_check="[ \"\`cat $input.f\`\" = \"$expected_out\" ]"
-        expected_out=${test_vector[$input]}
+        #${test_vector[$input]}
         create_bat_testpoint "$input $input.f" "$command" "$expected_out" "$fname" "$cust_msg" "$cust_check"
     done
 
