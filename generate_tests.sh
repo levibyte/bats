@@ -40,7 +40,7 @@ function create_bat_testpoint
 function create_bat_testcase_for_command_option_one
 {
     local current_command="$command_option_one"
-    local test_file=$current_command."bat"
+    local test_file=$TESTDIR/$current_command."bat"
     #use cases
     
     rm $test_file -f
@@ -52,11 +52,12 @@ function create_bat_testcase_for_command_option_one
     done
 
     #corner cases
-    test_file="cornercases_$current_command.bat"
+    test_file=$TESTDIR/"cornercases_$current_command.bat"
     rm $test_file -f
     touch $test_file
     create_bat_testpoint "-1" "$command" "" "$test_file" "negative_case" "-"
     create_bat_testpoint "00" "$command" "" "$test_file" "negative_case" "-"
+    create_bat_testpoint "101" "$command" "" "$test_file" "negative_case" "-"
     #create_bat_testpoint " "  "$command" "" "$test_file" "negative_case" "-"
     create_bat_testpoint "abc" "$command" "" "$test_file" "negative_case" "-"
 }
@@ -67,7 +68,7 @@ function create_bat_testcase_for_command_option_two
 {
     
     local current_command="$command_option_two"
-    local test_file=$current_command."bat"
+    local test_file=$TESTDIR/$current_command."bat"
 
     rm $test_file -f
     touch $test_file
@@ -80,7 +81,7 @@ function create_bat_testcase_for_command_option_two
     done
 
     #corner cases
-    local test_file="cornercases_$current_command.bat"
+    local test_file=$TESTDIR/"cornercases_$current_command.bat"
     rm $test_file -f
     touch $test_file
     
@@ -112,12 +113,33 @@ function create_bat_testcase_for_command_option_two
     
 }
 
+function create_bat_testcase_for_command_option_three_11
+{
+    local current_command="$command_option_three"
+    local test_file=$TESTDIR/11_$current_command."bat"
+
+    rm $test_file -f
+    touch $test_file
+    command="$BIN2TEST $current_command 1"
+
+    echo "@test \"executing <$command> doesn't crash after 11th time \" {" >> $test_file
+    i=0
+    while [ "$i" != "11" ]; do 
+        echo "  run $command " >> $test_file
+        i=`expr $i + 1`
+    done
+    
+    echo "  [ \"\$status\" -eq 0 ]" >> $test_file
+    echo "}" >> $test_file
+    echo >> $test_file
+
+}
 
 function create_bat_testcase_for_command_option_three
 {
     
     local current_command="$command_option_three"
-    local test_file=$current_command."bat"
+    local test_file=$TESTDIR/$current_command."bat"
 
     rm $test_file -f
     touch $test_file
@@ -129,7 +151,7 @@ function create_bat_testcase_for_command_option_three
     done
 
     #corner cases
-    local test_file="cornercases_$current_command.bat"
+    local test_file=$TESTDIR/"cornercases_$current_command.bat"
     rm $test_file -f
     touch $test_file
 
@@ -159,6 +181,7 @@ function genereate_test_cases
     create_bat_testcase_for_command_option_one
     create_bat_testcase_for_command_option_two
     create_bat_testcase_for_command_option_three
+    create_bat_testcase_for_command_option_three_11
 }
 
 function main {
@@ -191,6 +214,8 @@ command_option_one=$CMD_ONE
 command_option_two=$CMD_TWO
 command_option_three=$CMD_THREE
 command_option_four=$CMD_FOUR
+
+TESTDIR=special_tests
 
 main
 
