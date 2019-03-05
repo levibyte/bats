@@ -29,7 +29,7 @@ function create_bat_testpoint
         echo "  $custom_check" >> $test_file
     else
         echo "  [ \"\$status\" -eq 0 ]" >> $test_file
-        echo "  [ \"\`echo \$output | cut -d' ' -f3\`\" = \"$expected_out\"]" >> $test_file
+        echo "  [ \"\`echo \$output | cut -d' ' -f3\`\" = \"$expected_out\" ]" >> $test_file
         #echo "  [ \"\$output\" = \"$expected_out\" ]" >> $test_file
     fi
     
