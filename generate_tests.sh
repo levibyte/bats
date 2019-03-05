@@ -79,24 +79,24 @@ function create_bat_testcase_for_command_option_two
     touch $test_file
     num=3
     
-    echo "mkdir dir" >> $test_file
-    echo "mkdir not_exisiting_dir" >> $test_file
+    echo "mkdir -p  dir" >> $test_file
+    echo "mkdir -p  not_exisiting_dir" >> $test_file
     echo "touch not_writable_file" >> $test_file
     echo "chmod 555 not_writable_file" >> $test_file
-    echo "mkdir dir" >> $test_file
-    echo "mkdir not_writable_dir" >> $test_file
+    echo "mkdir -p  dir" >> $test_file
+    echo "mkdir -p  not_writable_dir" >> $test_file
     echo "chmod 555 not_writable_dir" >> $test_file
     echo >> $test_file
+        
     
-    
-    #mkdir dir
+    #mkdir -p  dir
     input=dir/f
     cust_msg="<$command $num $input.f> should write <$num> to <$input> file"
     cust_check="[ \"\`cat $input\`\" = \"$expected_out\" ]"
     create_bat_testpoint "$num $input" "$command" "$expected_out" "$test_file" "$cust_msg" "$cust_check"
 
     cust_check="[ \"\$status\" -ne 0 ]"
-    #mkdir not_exisiting_dir
+    #mkdir -p  not_exisiting_dir
     file=not_exisiting_dir/f
     cust_msg="<$command $num $file> should not be successfull"
     create_bat_testpoint "$num $file" "$command" "" "$test_file" "$cust_msg" "$cust_check"
@@ -108,7 +108,7 @@ function create_bat_testcase_for_command_option_two
     create_bat_testpoint "$num $file" "$command" "" "$test_file" "$cust_msg" "$cust_check"
 
 
-    mkdir not_writable_dir
+    mkdir -p  not_writable_dir
     chmod 555 not_writable_dir
     file=not_writable_dir/file
     cust_msg="<$command $num $file> should not be successfull"
