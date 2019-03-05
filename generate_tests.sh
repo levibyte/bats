@@ -12,6 +12,10 @@ function create_bat_testpoint
     echo "create_bat_testpoint <$input> <$cmd> <$expected_out> <$test_file> <$custom_message> <$custom_check>"
     
     if [ "$custom_message" != "" ]; then
+        if [ "$custom_message" == "negative_case" ]; then
+            custom_message="<$command $input> should not be successfull"
+            custom_check="[ \"\$status\" -ne 0 ]"
+        fi
         echo "@test \"$custom_message\" {" >> $test_file
     else
         echo "@test \"<$cmd $input> should return <$expected_out>\" {" >> $test_file
@@ -49,10 +53,10 @@ function create_bat_testcase_for_command_option_one
     test_file="cornercases_$current_command.bat"
     rm $test_file -f
     touch $test_file
-    create_bat_testpoint "-1" "$command" "1" "$test_file" ""
-    create_bat_testpoint "00" "$command" "2" "$test_file" ""
-    create_bat_testpoint "" "$command" "3" "$test_file" ""
-    create_bat_testpoint "abc" "$command" "4" "$test_file" ""
+    create_bat_testpoint "-1" "$command" "" "$test_file" "negative_case" "-"
+    create_bat_testpoint "00" "$command" "" "$test_file" "negative_case" "-"
+    #create_bat_testpoint " "  "$command" "" "$test_file" "negative_case" "-"
+    create_bat_testpoint "abc" "$command" "" "$test_file" "negative_case" "-"
 }
 
 
@@ -95,32 +99,27 @@ function create_bat_testcase_for_command_option_two
     cust_check="[ \"\`cat $input\`\" = \"$expected_out\" ]"
     create_bat_testpoint "$num $input" "$command" "$expected_out" "$test_file" "$cust_msg" "$cust_check"
 
-    cust_check="[ \"\$status\" -ne 0 ]"
     #mkdir -p  not_exisiting_dir
     file=not_exisiting_dir/f
-    cust_msg="<$command $num $file> should not be successfull"
-    create_bat_testpoint "$num $file" "$command" "" "$test_file" "$cust_msg" "$cust_check"
+    create_bat_testpoint "$num $file" "$command" "" "$test_file" "negative_case" "-"
 
-    touch not_writable_file
+    #touch not_writable_file
     #chmod 555 not_writable_file
     file=not_writable_file
-    cust_msg="<$command $num $file> should not be successfull"
-    create_bat_testpoint "$num $file" "$command" "" "$test_file" "$cust_msg" "$cust_check"
+    create_bat_testpoint "$num $file" "$command" "" "$test_file" "negative_case" "-"
 
 
-    mkdir -p  not_writable_dir
-    chmod 555 not_writable_dir
+    #mkdir -p  not_writable_dir
+    #chmod 555 not_writable_dir
     file=not_writable_dir/file
-    cust_msg="<$command $num $file> should not be successfull"
-    create_bat_testpoint "$num $file" "$command" "" "$test_file" "$cust_msg" "$cust_check"
+    create_bat_testpoint "$num $file" "$command" "" "$test_file" "negative_case" "-"
 
     
     file=test.file
-    cust_msg="<$command -1 $file> should not be successfull"
-    create_bat_testpoint "-1 $file" "$command" "" "$test_file" "$cust_msg" "$cust_check"
-    create_bat_testpoint "00 $file" "$command" "" "$test_file" "$cust_msg" "$cust_check"
-    create_bat_testpoint "" "$command" "" "$test_file" "$cust_msg" "$cust_check"
-    create_bat_testpoint "abc $file" "$command" "" "$test_file" "$cust_msg" "$cust_check"
+    create_bat_testpoint "-1 $file" "$command" "" "$test_file" "negative_case" "-"
+    create_bat_testpoint "00 $file" "$command" "" "$test_file" "negative_case" "-"
+    create_bat_testpoint "" "$command" "" "$test_file" "negative_case" "-"
+    create_bat_testpoint "abc $file" "$command" "" "$test_file" "negative_case" "-"
     
 }
 
@@ -141,13 +140,21 @@ function create_bat_testcase_for_command_option_three
     done
 
     #corner cases
-    #test_file="cornercases_$current_command.bat"
-    #rm $test_file -f
-    #touch $test_file
-    #create_bat_testpoint "-1" "$command" "1" "$test_file" ""
-    #create_bat_testpoint "00" "$command" "2" "$test_file" ""
-    #create_bat_testpoint "" "$command" "3" "$test_file" ""
-    #create_bat_testpoint "abc" "$command" "4" "$test_file" ""
+    
+    #mkdir -p  not_exisiting_dir
+    file=not_exisiting_dir/f
+    create_bat_testpoint "$num $file" "$command" "" "$test_file" "negative_case" "-"
+
+    #touch not_writable_file
+    #chmod 555 not_writable_file
+    file=not_writable_file
+    create_bat_testpoint "$num $file" "$command" "" "$test_file" "negative_case" "-"
+
+
+    #mkdir -p  not_writable_dir
+    #chmod 555 not_writable_dir
+    file=not_writable_dir/file
+    create_bat_testpoint "$num $file" "$command" "" "$test_file" "negative_case" "-"    
 }
 
 
@@ -160,10 +167,10 @@ function genereate_test_cases
     test_vector[4]=$type_b
     test_vector[12]=$type_c
     test_vector[24]=$type_c
-    test_vector[33]=$type_c
+    test_vector[33]=$type_a
     test_vector[36]=$type_c
-    test_vector[40]=$type_c
-    test_vector[41]=$type_c
+    test_vector[40]=$type_b
+    test_vector[41]=$type_d
     test_vector[333]=$type_c
     test_vector[240]=$type_c
     
