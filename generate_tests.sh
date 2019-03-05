@@ -1,78 +1,58 @@
 #!/bin/bash
 
-if [ ! -f "sourceme.sh" ]; then
-    echo "Error: sourcme.sh not found"
-    exit 1
-fi
-
-source sourceme.sh
-
-BIN2TEST=$BIN
-type_a=$RET_A
-type_b=$RET_B
-type_c=$RET_C
-type_d=$RET_D
-type_e=$RET_E
-
-command_option_default=$CMD_DEFAULT
-command_option_one=$CMD_ONE
-command_option_two=$CMD_TWO
-command_option_three=$CMD_THREE
-command_option_four=$CMD_FOUR
-
 #creates single testpoint in the bat test
 function create_bat_testpoint
 {
     local input=$1
     local cmd=$2
     local expected_out=$3
-    local fname=$4
+    local test_file=$4
     local custom_message=$5
     local custom_check=$6
-    echo "create_bat_testpoint <$input> <$cmd> <$expected_out> <$fname> <$custom_message> <$custom_check>"
+    echo "create_bat_testpoint <$input> <$cmd> <$expected_out> <$test_file> <$custom_message> <$custom_check>"
     
     if [ "$custom_message" != "" ]; then
-        echo "@test \"$custom_message\" {" >> $fname
+        echo "@test \"$custom_message\" {" >> $test_file
     else
-        echo "@test \"<$cmd $input> should return <$expected_out>\" {" >> $fname
+        echo "@test \"<$cmd $input> should return <$expected_out>\" {" >> $test_file
     fi
     
-    echo "  run $cmd $input" >> $fname
-    echo "  [ \"\$status\" -eq 0 ]" >> $fname
+    echo "  run $cmd $input" >> $test_file
     
     if [ "$custom_check" != "" ]; then
-        echo "  $custom_check" >> $fname
+        echo "  $custom_check" >> $test_file
     else
-        echo "  [ \"\$output\" = \"$expected_out\" ]" >> $fname
+        echo "  [ \"\$status\" -eq 0 ]" >> $test_file
+        echo "  [ \"\$output\" = \"$expected_out\" ]" >> $test_file
     fi
     
-    echo "}" >> $fname
-    echo >> $fname
+    echo "}" >> $test_file
+    echo >> $test_file
 }
 
 #creating bad tests
 function create_bat_testcase_for_command_option_one
 {
-    current_command="$command_option_one"
-    fname=$current_command."bat"
+    local current_command="$command_option_one"
+    local test_file=$current_command."bat"
     #use cases
     
-    rm $fname -f
-    touch $fname
+    rm $test_file -f
+    touch $test_file
     command="$BIN2TEST $current_command"
     for input in "${!test_vector[@]}"; do
         expected_out=${test_vector[$input]}
-        create_bat_testpoint "$input" "$command" "$expected_out" "$fname" "" ""
+        create_bat_testpoint "$input" "$command" "$expected_out" "$test_file" "" ""
     done
 
     #corner cases
-    fname="cornercases_$current_command.bat"
-    rm $fname -f
-    touch $fname
-    create_bat_testpoint "-1" "$command" "1" "$fname" ""
-    create_bat_testpoint "00" "$command" "2" "$fname" ""
-    create_bat_testpoint "" "$command" "3" "$fname" ""
-    create_bat_testpoint "abc" "$command" "4" "$fname" ""
+    test_file="cornercases_$current_command.bat"
+    rm $test_file -f
+    touch $test_file
+    create_bat_testpoint "-1" "$command" "1" "$test_file" ""
+    create_bat_testpoint "00" "$command" "2" "$test_file" ""
+    create_bat_testpoint "" "$command" "3" "$test_file" ""
+    create_bat_testpoint "abc" "$command" "4" "$test_file" ""
 }
 
 
@@ -80,55 +60,94 @@ function create_bat_testcase_for_command_option_one
 function create_bat_testcase_for_command_option_two
 {
     
-    current_command="$command_option_two"
-    fname=$current_command."bat"
+    local current_command="$command_option_two"
+    local test_file=$current_command."bat"
 
-    rm $fname -f
-    touch $fname
+    rm $test_file -f
+    touch $test_file
     command="$BIN2TEST $current_command"
     for input in "${!test_vector[@]}"; do
         expected_out=$input
         cust_msg="<$command $input $input.f> should write <$input> to <$input.f> file"
         cust_check="[ \"\`cat $input.f\`\" = \"$expected_out\" ]"
-        #${test_vector[$input]}
-        create_bat_testpoint "$input $input.f" "$command" "$expected_out" "$fname" "$cust_msg" "$cust_check"
+        create_bat_testpoint "$input $input.f" "$command" "$expected_out" "$test_file" "$cust_msg" "$cust_check"
     done
 
     #corner cases
-    #fname="cornercases_$current_command.bat"
-    #rm $fname -f
-    #touch $fname
-    #create_bat_testpoint "-1" "$command" "1" "$fname" ""
-    #create_bat_testpoint "00" "$command" "2" "$fname" ""
-    #create_bat_testpoint "" "$command" "3" "$fname" ""
-    #create_bat_testpoint "abc" "$command" "4" "$fname" ""
+    test_file="cornercases_$current_command.bat"
+    rm $test_file -f
+    touch $test_file
+    num=3
+    
+    echo "mkdir dir" >> $test_file
+    echo "mkdir not_exisiting_dir" >> $test_file
+    echo "touch not_writable_file" >> $test_file
+    echo "chmod 555 not_writable_file" >> $test_file
+    echo "mkdir dir" >> $test_file
+    echo "mkdir not_writable_dir" >> $test_file
+    echo "chmod 555 not_writable_dir" >> $test_file
+    echo >> $test_file
+    
+    
+    #mkdir dir
+    input=dir/f
+    cust_msg="<$command $num $input.f> should write <$num> to <$input> file"
+    cust_check="[ \"\`cat $input\`\" = \"$expected_out\" ]"
+    create_bat_testpoint "$num $input" "$command" "$expected_out" "$test_file" "$cust_msg" "$cust_check"
+
+    cust_check="[ \"\$status\" -ne 0 ]"
+    #mkdir not_exisiting_dir
+    file=not_exisiting_dir/f
+    cust_msg="<$command $num $file> should not be successfull"
+    create_bat_testpoint "$num $file" "$command" "" "$test_file" "$cust_msg" "$cust_check"
+
+    touch not_writable_file
+    #chmod 555 not_writable_file
+    file=not_writable_file
+    cust_msg="<$command $num $file> should not be successfull"
+    create_bat_testpoint "$num $file" "$command" "" "$test_file" "$cust_msg" "$cust_check"
+
+
+    mkdir not_writable_dir
+    chmod 555 not_writable_dir
+    file=not_writable_dir/file
+    cust_msg="<$command $num $file> should not be successfull"
+    create_bat_testpoint "$num $file" "$command" "" "$test_file" "$cust_msg" "$cust_check"
+
+    
+    file=test.file
+    cust_msg="<$command -1 $file> should not be successfull"
+    create_bat_testpoint "-1 $file" "$command" "" "$test_file" "$cust_msg" "$cust_check"
+    create_bat_testpoint "00 $file" "$command" "" "$test_file" "$cust_msg" "$cust_check"
+    create_bat_testpoint "" "$command" "" "$test_file" "$cust_msg" "$cust_check"
+    create_bat_testpoint "abc $file" "$command" "" "$test_file" "$cust_msg" "$cust_check"
+    
 }
 
 
 function create_bat_testcase_for_command_option_three
 {
     
-    current_command="$command_option_three"
-    fname=$current_command."bat"
+    local current_command="$command_option_three"
+    local test_file=$current_command."bat"
 
-    rm $fname -f
-    touch $fname
+    rm $test_file -f
+    touch $test_file
     command="$BIN2TEST $current_command"
     for input in "${!test_vector[@]}"; do
-        #cust_check="[ \"\`cat $input.f\`\" = \"$expected_out\" ]"
         expected_out=${test_vector[$input]}
         cust_msg="<$command $input.f> should return <$expected_out> when reading <$input.f> file"
-        create_bat_testpoint "$input.f" "$command" "$expected_out" "$fname" "$cust_msg" 
+        create_bat_testpoint "$input.f" "$command" "$expected_out" "$test_file" "$cust_msg" 
     done
 
     #corner cases
-    #fname="cornercases_$current_command.bat"
-    #rm $fname -f
-    #touch $fname
-    #create_bat_testpoint "-1" "$command" "1" "$fname" ""
-    #create_bat_testpoint "00" "$command" "2" "$fname" ""
-    #create_bat_testpoint "" "$command" "3" "$fname" ""
-    #create_bat_testpoint "abc" "$command" "4" "$fname" ""
+    #test_file="cornercases_$current_command.bat"
+    #rm $test_file -f
+    #touch $test_file
+    #create_bat_testpoint "-1" "$command" "1" "$test_file" ""
+    #create_bat_testpoint "00" "$command" "2" "$test_file" ""
+    #create_bat_testpoint "" "$command" "3" "$test_file" ""
+    #create_bat_testpoint "abc" "$command" "4" "$test_file" ""
 }
 
 
@@ -139,8 +158,6 @@ function genereate_test_cases
     test_vector[1]=$type_d
     test_vector[3]=$type_a
     test_vector[4]=$type_b
-    test_vector[8]=$type_b
-    test_vector[9]=$type_a
     test_vector[12]=$type_c
     test_vector[24]=$type_c
     test_vector[33]=$type_c
@@ -160,25 +177,35 @@ function main {
     genereate_test_cases
 }
 
+
+function validate {
+    if [ ! -f "sourceme.sh" ]; then
+        echo "Error: sourcme.sh not found"
+        exit 1
+    fi
+}
+
+
+validate
+
+source sourceme.sh
+
+#This is just hack for "obfuscation" reasons
+BIN2TEST=$BIN
+type_a=$RET_A
+type_b=$RET_B
+type_c=$RET_C
+type_d=$RET_D
+type_e=$RET_E
+
+command_option_default=$CMD_DEFAULT
+command_option_one=$CMD_ONE
+command_option_two=$CMD_TWO
+command_option_three=$CMD_THREE
+command_option_four=$CMD_FOUR
+
 main
 
-#current_command="$command_option_two"
-#fname=$current_command."bat"
-#rm $fname -f
-#touch $fname
-#command="$BIN2TEST $current_command"
-#for input in "${!test_vector[@]}"; do
-#    expected_out=${test_vector[$input]}
-#    file="$input.f"
-#    cmd="$command $input $file"
-#    echo "@test \"<$cmd> should save write <$expected_out> to $file\" {" >> $fname
-#    echo "  run $cmd" >> $fname
-#    echo "  res=\`cat $file\`" >> $fname
-#    echo "  [ \"\$status\" -eq 0 ]" >> $fname
-#    echo "  [ \"\$res\" = \"$expected_out\" ]" >> $fname
-#    echo "}" >> $fname
-#    echo >> $fname
-#done
 
 
 
