@@ -194,13 +194,18 @@ function validate {
         exit 1
     fi
     
-    
+    if [ ! -f "$BIN" ]; then
+       echo "Error: testing binary <$BIN> not found"
+       exit 1
+    fi
+
+    source sourceme.sh   
 }
 
 
 validate
 
-source sourceme.sh
+#source sourceme.sh
 
 #This is just hack for "obfuscation" reasons
 BIN2TEST=$BIN
