@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#This script will create automated test-cases for BAT engine
+
 #creates single testpoint in the bat test
 function create_bat_testpoint
 {
@@ -9,7 +11,7 @@ function create_bat_testpoint
     local test_file=$4
     local custom_message=$5
     local custom_check=$6
-    echo "create_bat_testpoint <$input> <$cmd> <$expected_out> <$test_file> <$custom_message> <$custom_check>"
+    #echo "create_bat_testpoint <$input> <$cmd> <$expected_out> <$test_file> <$custom_message> <$custom_check>"
     
     if [ "$custom_message" != "" ]; then
         if [ "$custom_message" == "negative_case" ]; then
@@ -78,10 +80,10 @@ function create_bat_testcase_for_command_option_two
     done
 
     #corner cases
-    test_file="cornercases_$current_command.bat"
+    local test_file="cornercases_$current_command.bat"
     rm $test_file -f
     touch $test_file
-    num=3
+    
     
     echo "mkdir -p  dir" >> $test_file
     echo "mkdir -p  not_exisiting_dir" >> $test_file
@@ -94,32 +96,19 @@ function create_bat_testcase_for_command_option_two
         
     
     #mkdir -p  dir
-    input=dir/f
-    cust_msg="<$command $num $input.f> should write <$num> to <$input> file"
-    cust_check="[ \"\`cat $input\`\" = \"$expected_out\" ]"
+    local num=3
+    local input=dir/f
+    local cust_msg="<$command $num $input.f> should write <$num> to <$input> file"
+    local cust_check="[ \"\`cat $input\`\" = \"$expected_out\" ]"
     create_bat_testpoint "$num $input" "$command" "$expected_out" "$test_file" "$cust_msg" "$cust_check"
 
-    #mkdir -p  not_exisiting_dir
-    file=not_exisiting_dir/f
-    create_bat_testpoint "$num $file" "$command" "" "$test_file" "negative_case" "-"
-
-    #touch not_writable_file
-    #chmod 555 not_writable_file
-    file=not_writable_file
-    create_bat_testpoint "$num $file" "$command" "" "$test_file" "negative_case" "-"
-
-
-    #mkdir -p  not_writable_dir
-    #chmod 555 not_writable_dir
-    file=not_writable_dir/file
-    create_bat_testpoint "$num $file" "$command" "" "$test_file" "negative_case" "-"
-
-    
-    file=test.file
-    create_bat_testpoint "-1 $file" "$command" "" "$test_file" "negative_case" "-"
-    create_bat_testpoint "00 $file" "$command" "" "$test_file" "negative_case" "-"
-    create_bat_testpoint "" "$command" "" "$test_file" "negative_case" "-"
-    create_bat_testpoint "abc $file" "$command" "" "$test_file" "negative_case" "-"
+    create_bat_testpoint "3 not_exisiting_dir/f" "$command" "" "$test_file" "negative_case" "-"
+    create_bat_testpoint "3 not_writable_file" "$command" "" "$test_file" "negative_case" "-"
+    create_bat_testpoint "3 not_writable_dir/file" "$command" "" "$test_file" "negative_case" "-"
+    create_bat_testpoint "-1 test.file" "$command" "" "$test_file" "negative_case" "-"
+    create_bat_testpoint "00 test.file" "$command" "" "$test_file" "negative_case" "-"
+    create_bat_testpoint "" "test.file" "" "$test_file" "negative_case" "-"
+    create_bat_testpoint "abc test.file" "$command" "" "$test_file" "negative_case" "-"
     
 }
 
@@ -140,21 +129,13 @@ function create_bat_testcase_for_command_option_three
     done
 
     #corner cases
-    
-    #mkdir -p  not_exisiting_dir
-    file=not_exisiting_dir/f
-    create_bat_testpoint "$num $file" "$command" "" "$test_file" "negative_case" "-"
+    local test_file="cornercases_$current_command.bat"
+    rm $test_file -f
+    touch $test_file
 
-    #touch not_writable_file
-    #chmod 555 not_writable_file
-    file=not_writable_file
-    create_bat_testpoint "$num $file" "$command" "" "$test_file" "negative_case" "-"
-
-
-    #mkdir -p  not_writable_dir
-    #chmod 555 not_writable_dir
-    file=not_writable_dir/file
-    create_bat_testpoint "$num $file" "$command" "" "$test_file" "negative_case" "-"    
+    create_bat_testpoint "not_exisiting_dir/f" "$command" "" "$test_file" "negative_case" "-"
+    create_bat_testpoint "not_writable_file" "$command" "" "$test_file" "negative_case" "-"
+    create_bat_testpoint "not_writable_dir/file" "$command" "" "$test_file" "negative_case" "-"    
 }
 
 
