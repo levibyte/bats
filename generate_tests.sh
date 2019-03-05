@@ -93,18 +93,6 @@ function create_bat_testcase_for_command_option_two
     touch $test_file
     echo "load common" > $test_file
 
-    
-    #echo "mkdir -p  dir" >> $test_file
-    #echo "mkdir -p  not_exisiting_dir" >> $test_file
-    #echo "touch not_writable_file" >> $test_file
-    #echo "chmod 555 not_writable_file" >> $test_file
-    #echo "mkdir -p  dir" >> $test_file
-    #echo "mkdir -p  not_writable_dir" >> $test_file
-    #echo "chmod 555 not_writable_dir" >> $test_file
-    #echo >> $test_file
-        
-    
-    #mkdir -p  dir
     local num=3
     local input=dir/f
     local cust_msg="<$command $num $input.f> should write <$num> to <$input> file"
@@ -127,7 +115,6 @@ function create_bat_testcase_for_command_option_three_11
     local test_file=$TESTDIR/11_$current_command."bat"
     rm $test_file -f
     touch $test_file
-    
     echo "load common" > $test_file
 
     command="$BIN2TEST $current_command 1"
@@ -151,12 +138,7 @@ function create_bat_testcase_for_command_option_three
     local test_file=$TESTDIR/$current_command."bat"
     rm $test_file -f
     touch $test_file
-    
     echo "load common" > $test_file
-
-
-
-    #[ "`echo $output | cut -d' ' -f3`" = "Meh" ]
 
     command="$BIN2TEST $current_command"
     for input in "${!test_vector[@]}"; do
