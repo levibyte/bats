@@ -29,7 +29,8 @@ function create_bat_testpoint
         echo "  $custom_check" >> $test_file
     else
         echo "  [ \"\$status\" -eq 0 ]" >> $test_file
-        echo "  [ \"\$output\" = \"$expected_out\" ]" >> $test_file
+        echo "  [ \"\`echo \$output | cut -d' ' -f3\`\" = \"$expected_out\"]" >> $test_file
+        #echo "  [ \"\$output\" = \"$expected_out\" ]" >> $test_file
     fi
     
     echo "}" >> $test_file
@@ -48,6 +49,7 @@ function create_bat_testcase_for_command_option_one
     command="$BIN2TEST $current_command"
     for input in "${!test_vector[@]}"; do
         expected_out=${test_vector[$input]}
+        expected_out=`echo $expected_out | cut -d' ' -f3`
         create_bat_testpoint "$input" "$command" "$expected_out" "$test_file" "" ""
     done
 
@@ -57,7 +59,6 @@ function create_bat_testcase_for_command_option_one
     touch $test_file
     create_bat_testpoint "-1" "$command" "" "$test_file" "negative_case" "-"
     create_bat_testpoint "00" "$command" "" "$test_file" "negative_case" "-"
-    create_bat_testpoint "101" "$command" "" "$test_file" "negative_case" "-"
     #create_bat_testpoint " "  "$command" "" "$test_file" "negative_case" "-"
     create_bat_testpoint "abc" "$command" "" "$test_file" "negative_case" "-"
 }
@@ -141,11 +142,14 @@ function create_bat_testcase_for_command_option_three
     local current_command="$command_option_three"
     local test_file=$TESTDIR/$current_command."bat"
 
+    #[ "`echo $output | cut -d' ' -f3`" = "Meh" ]
+
     rm $test_file -f
     touch $test_file
     command="$BIN2TEST $current_command"
     for input in "${!test_vector[@]}"; do
         expected_out=${test_vector[$input]}
+        expected_out=`echo $expected_out | cut -d' ' -f3`
         cust_msg="<$command $input.f> should return <$expected_out> when reading <$input.f> file"
         create_bat_testpoint "$input.f" "$command" "$expected_out" "$test_file" "$cust_msg" 
     done
@@ -194,6 +198,8 @@ function validate {
         echo "Error: sourcme.sh not found"
         exit 1
     fi
+    
+    
 }
 
 
