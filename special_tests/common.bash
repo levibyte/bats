@@ -8,9 +8,9 @@ mkdir -p  dir
 mkdir -p  not_writable_dir
 chmod 555 not_writable_dir/
 
-chmod 777 .count -f
-touch. count -f
+#chmod 777 .count -f
+#touch .count -f
 #fix unstabillity
 chmod 777 .count -f
 echo 0 > .count
-chmod 555 .count
+chmod 555 .count -f
