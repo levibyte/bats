@@ -199,6 +199,11 @@ function validate {
        exit 1
     fi
 
+    if [ ! -x "$BIN" ]; then
+	echo "Error: testing binary <$BIN> has no execute permissions"
+	exit 1
+    fi
+	
     source sourceme.sh   
 }
 
