@@ -46,6 +46,9 @@ function create_bat_testcase_for_command_option_one
     
     rm $test_file -f
     touch $test_file
+    echo "load common" > $test_file
+
+
     command="$BIN2TEST $current_command"
     for input in "${!test_vector[@]}"; do
         expected_out=${test_vector[$input]}
@@ -57,6 +60,8 @@ function create_bat_testcase_for_command_option_one
     test_file=$TESTDIR/"cornercases_$current_command.bat"
     rm $test_file -f
     touch $test_file
+    echo "load common" > $test_file
+
     create_bat_testpoint "-1" "$command" "" "$test_file" "negative_case" "-"
     create_bat_testpoint "00" "$command" "" "$test_file" "negative_case" "-"
     #create_bat_testpoint " "  "$command" "" "$test_file" "negative_case" "-"
@@ -70,9 +75,10 @@ function create_bat_testcase_for_command_option_two
     
     local current_command="$command_option_two"
     local test_file=$TESTDIR/$current_command."bat"
-
     rm $test_file -f
     touch $test_file
+    echo "load common" > $test_file
+
     command="$BIN2TEST $current_command"
     for input in "${!test_vector[@]}"; do
         expected_out=$input
@@ -85,16 +91,17 @@ function create_bat_testcase_for_command_option_two
     local test_file=$TESTDIR/"cornercases_$current_command.bat"
     rm $test_file -f
     touch $test_file
+    echo "load common" > $test_file
+
     
-    
-    echo "mkdir -p  dir" >> $test_file
-    echo "mkdir -p  not_exisiting_dir" >> $test_file
-    echo "touch not_writable_file" >> $test_file
-    echo "chmod 555 not_writable_file" >> $test_file
-    echo "mkdir -p  dir" >> $test_file
-    echo "mkdir -p  not_writable_dir" >> $test_file
-    echo "chmod 555 not_writable_dir" >> $test_file
-    echo >> $test_file
+    #echo "mkdir -p  dir" >> $test_file
+    #echo "mkdir -p  not_exisiting_dir" >> $test_file
+    #echo "touch not_writable_file" >> $test_file
+    #echo "chmod 555 not_writable_file" >> $test_file
+    #echo "mkdir -p  dir" >> $test_file
+    #echo "mkdir -p  not_writable_dir" >> $test_file
+    #echo "chmod 555 not_writable_dir" >> $test_file
+    #echo >> $test_file
         
     
     #mkdir -p  dir
@@ -118,11 +125,12 @@ function create_bat_testcase_for_command_option_three_11
 {
     local current_command="$command_option_three"
     local test_file=$TESTDIR/11_$current_command."bat"
-
     rm $test_file -f
     touch $test_file
-    command="$BIN2TEST $current_command 1"
+    
+    echo "load common" > $test_file
 
+    command="$BIN2TEST $current_command 1"
     echo "@test \"executing <$command> doesn't crash after 11th time \" {" >> $test_file
     i=0
     while [ "$i" != "11" ]; do 
@@ -141,11 +149,15 @@ function create_bat_testcase_for_command_option_three
     
     local current_command="$command_option_three"
     local test_file=$TESTDIR/$current_command."bat"
+    rm $test_file -f
+    touch $test_file
+    
+    echo "load common" > $test_file
+
+
 
     #[ "`echo $output | cut -d' ' -f3`" = "Meh" ]
 
-    rm $test_file -f
-    touch $test_file
     command="$BIN2TEST $current_command"
     for input in "${!test_vector[@]}"; do
         expected_out=${test_vector[$input]}
@@ -158,6 +170,7 @@ function create_bat_testcase_for_command_option_three
     local test_file=$TESTDIR/"cornercases_$current_command.bat"
     rm $test_file -f
     touch $test_file
+    echo "load common" > $test_file
 
     create_bat_testpoint "not_exisiting_dir/f" "$command" "" "$test_file" "negative_case" "-"
     create_bat_testpoint "not_writable_file" "$command" "" "$test_file" "negative_case" "-"
