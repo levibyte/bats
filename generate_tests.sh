@@ -173,6 +173,9 @@ function genereate_test_cases
     test_vector[36]=$type_c
     test_vector[40]=$type_b
     test_vector[41]=$type_d
+    test_vector[99]=$type_a
+    test_vector[100]=$type_b
+    test_vector[101]=$type_d
     test_vector[333]=$type_c
     test_vector[240]=$type_c
     
