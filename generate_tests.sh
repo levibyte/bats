@@ -170,14 +170,11 @@ function genereate_test_cases
     test_vector[12]=$type_c
     test_vector[24]=$type_c
     test_vector[33]=$type_a
-    test_vector[36]=$type_c
     test_vector[40]=$type_b
     test_vector[41]=$type_d
     test_vector[99]=$type_a
     test_vector[100]=$type_b
     test_vector[101]=$type_d
-    test_vector[333]=$type_c
-    test_vector[240]=$type_c
     
     #create_test_case_for_command_default
     create_bat_testcase_for_command_option_one
